@@ -1,0 +1,5 @@
+{
+  "name": "BrightHorizon GTM & GA4 Auditor",
+  "description": "AI-powered monorepo for auditing Google Tag Manager containers and querying Google Analytics 4 properties with Vertex AI Gemini.",
+  "requestFramePermissions": []
+}

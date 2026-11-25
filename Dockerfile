@@ -1,0 +1,27 @@
+# ── Stage 1: build the GTM React app (pnpm monorepo) ─────────────────────────
+FROM node:22-alpine AS build
+RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
+WORKDIR /repo
+
+# Install deps first for better layer caching
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY frontend/apps/ga4/package.json frontend/apps/ga4/
+COPY frontend/apps/gtm/package.json frontend/apps/gtm/
+COPY frontend/packages/shared/package.json frontend/packages/shared/
+COPY server/package.json server/
+RUN pnpm install --frozen-lockfile --filter "@brighthorizon/gtm..."
+
+COPY frontend ./frontend
+
+# Public URL of the backend Cloud Run service (baked in at build time by Vite).
+# Leave empty if you reverse-proxy /api to the backend on the same origin.
+ARG VITE_WORKER_URL="https://ga4-backend-851163817737.us-south1.run.app"
+ENV VITE_WORKER_URL=${VITE_WORKER_URL}
+RUN pnpm build:gtm
+
+# ── Stage 2: serve static files with nginx on Cloud Run's port ───────────────
+FROM nginx:1.27-alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /repo/frontend/apps/gtm/dist /usr/share/nginx/html
+EXPOSE 8080
+CMD ["nginx", "-g", "daemon off;"]

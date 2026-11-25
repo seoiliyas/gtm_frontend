@@ -1,0 +1,42 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+
+# Environment & Secrets
+wrangler.toml
+.env*
+!.env.example
+!server/.env.example
+!wrangler.toml.example
+*service-account*.json
+gen-lang-client-*.txt
+
+# Archives & Personal Artifacts
+*.zip
+*.docx
+*.pdf
+frontend/apps/*/test.css
+
+# Local Database Files
+*.sqlite
+*.sqlite3
+*.db
+
+# Cloudflare
+.wrangler/
+.dev.vars
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
